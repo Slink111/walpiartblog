@@ -706,6 +706,14 @@ function setUsername() {
     }, 3000);
 }
 
+function logout() {
+    currentUser = null;
+    isAdmin = false;
+    localStorage.removeItem('currentUser');
+    updateUserInterface();
+    closeAdminPanel();
+}
+
 function updateUserInterface() {
     if (currentUser) {
         document.querySelector('.username-selector').classList.add('hidden');
@@ -721,14 +729,6 @@ function updateUserInterface() {
         document.querySelector('.username-selector').classList.remove('hidden');
         userDisplay.classList.add('hidden');
     }
-}
-
-function logout() {
-    currentUser = null;
-    isAdmin = false;
-    localStorage.removeItem('currentUser');
-    updateUserInterface();
-    closeAdminPanel();
 }
 
 // Admin Panel Functions
