@@ -715,8 +715,10 @@ function logout() {
 }
 
 function updateUserInterface() {
+    const usernameSelector = document.getElementById('usernameSelector');
+    
     if (currentUser) {
-        document.querySelector('.username-selector').classList.add('hidden');
+        if (usernameSelector) usernameSelector.classList.add('hidden');
         userDisplay.classList.remove('hidden');
         currentUsername.textContent = currentUser;
         
@@ -726,7 +728,7 @@ function updateUserInterface() {
             adminPanelBtn.classList.add('hidden');
         }
     } else {
-        document.querySelector('.username-selector').classList.remove('hidden');
+        if (usernameSelector) usernameSelector.classList.remove('hidden');
         userDisplay.classList.add('hidden');
     }
 }

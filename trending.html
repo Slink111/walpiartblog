@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walpi - Wallpaper Discovery Platform</title>
+    <title>Trending - Walpi Wallpaper Discovery</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,9 +29,9 @@
                     </button>
                 </div>
                 <nav class="nav-links">
-                    <a href="home.html" class="nav-link active">Home</a>
+                    <a href="home.html" class="nav-link">Home</a>
                     <a href="categories.html" class="nav-link">Categories</a>
-                    <a href="trending.html" class="nav-link">Trending</a>
+                    <a href="trending.html" class="nav-link active">Trending</a>
                 </nav>
                 <div class="user-section">
                     <div class="username-selector" id="usernameSelector">
@@ -64,95 +64,35 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
-            <!-- Wallpaper Grid View (Default) -->
+            <!-- Trending Hero -->
+            <section class="trending-hero">
+                <h2 class="section-title">🔥 Trending Now</h2>
+                <p class="section-description">Most popular wallpapers this week based on likes and downloads</p>
+            </section>
+
+            <!-- Trending Stats -->
+            <section class="trending-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalWallpapers">0</div>
+                    <div class="stat-label">Total Wallpapers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalLikes">0</div>
+                    <div class="stat-label">Total Likes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topCategory">-</div>
+                    <div class="stat-label">Top Category</div>
+                </div>
+            </section>
+
+            <!-- Trending Grid -->
             <div id="gridView" class="wallpaper-grid">
                 <div class="grid-header">
-                    <h2>Discover Wallpapers</h2>
-                    <div class="filter-tags">
-                        <button class="tag active" data-category="all">All</button>
-                        <button class="tag" data-category="nature">Nature</button>
-                        <button class="tag" data-category="anime">Anime</button>
-                        <button class="tag" data-category="minimal">Minimal</button>
-                        <button class="tag" data-category="abstract">Abstract</button>
-                    </div>
+                    <h2>Most Popular</h2>
                 </div>
                 <div id="wallpaperGrid" class="grid">
-                    <!-- Wallpapers will be dynamically loaded here -->
-                </div>
-            </div>
-
-            <!-- Wallpaper Detail View (Split Screen) -->
-            <div id="detailView" class="wallpaper-detail hidden">
-                <div class="detail-left">
-                    <div class="wallpaper-preview">
-                        <img id="mainWallpaper" src="" alt="" class="main-wallpaper">
-                    </div>
-                    <div class="wallpaper-actions">
-                        <button id="downloadBtn" class="action-btn primary">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Download
-                        </button>
-                        <button id="likeBtn" class="action-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                            </svg>
-                            <span id="likeCount">0</span>
-                        </button>
-                        <button id="shareBtn" class="action-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="18" cy="5" r="3"></circle>
-                                <circle cx="6" cy="12" r="3"></circle>
-                                <circle cx="18" cy="19" r="3"></circle>
-                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                            </svg>
-                            Share
-                        </button>
-                    </div>
-                    <div class="thumbnail-strip">
-                        <div id="thumbnailStrip" class="thumbnails">
-                            <!-- Additional thumbnails will be loaded here -->
-                        </div>
-                    </div>
-                    <div class="ad-block">
-                        <div class="ad-placeholder">
-                            <span>Advertisement</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="detail-right">
-                    <div class="wallpaper-info">
-                        <h1 id="wallpaperTitle">Wallpaper Title</h1>
-                        <p id="wallpaperDescription">Description of the wallpaper and its story...</p>
-                        <div id="wallpaperTags" class="tags">
-                            <!-- Tags will be dynamically loaded -->
-                        </div>
-                    </div>
-                    
-                    <div class="blog-content">
-                        <h3>About This Wallpaper</h3>
-                        <div id="blogText" class="blog-text">
-                            <!-- Blog content will be loaded here -->
-                        </div>
-                    </div>
-                    
-                    <div class="ad-block">
-                        <div class="ad-placeholder">
-                            <span>Advertisement</span>
-                        </div>
-                    </div>
-                    
-                    <div class="more-to-explore">
-                        <h3>More to Explore</h3>
-                        <div id="relatedWallpapers" class="related-grid">
-                            <!-- Related wallpapers will be loaded here -->
-                        </div>
-                    </div>
+                    <!-- Trending wallpapers will be dynamically loaded here -->
                 </div>
             </div>
         </div>
@@ -181,12 +121,12 @@
                 <!-- Upload Tab -->
                 <div id="uploadTab" class="admin-tab-content active">
                     <div class="form-group">
-                        <label for="wallpaperTitle">Title</label>
+                        <label>Title</label>
                         <input type="text" id="adminTitle" placeholder="Enter wallpaper title...">
                     </div>
                     
                     <div class="form-group">
-                        <label for="wallpaperCategory">Category</label>
+                        <label>Category</label>
                         <select id="adminCategory">
                             <option value="nature">Nature</option>
                             <option value="anime">Anime</option>
@@ -196,28 +136,28 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="wallpaperTags">Tags (comma-separated)</label>
+                        <label>Tags (comma-separated)</label>
                         <input type="text" id="adminTags" placeholder="nature, landscape, mountains...">
                     </div>
                     
                     <div class="form-group">
-                        <label for="wallpaperImage">Image</label>
+                        <label>Image</label>
                         <input type="file" id="adminImage" accept="image/*">
                         <div class="image-preview" id="imagePreview"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="wallpaperAlt">Alt Text</label>
+                        <label>Alt Text</label>
                         <input type="text" id="adminAlt" placeholder="Describe the image for accessibility...">
                     </div>
                     
                     <div class="form-group">
-                        <label for="wallpaperDescription">Description</label>
+                        <label>Description</label>
                         <textarea id="adminDescription" rows="3" placeholder="Brief description..."></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="wallpaperBlog">Blog Content</label>
+                        <label>Blog Content</label>
                         <textarea id="adminBlog" rows="6" placeholder="Detailed blog content about this wallpaper..."></textarea>
                     </div>
                     
@@ -227,14 +167,14 @@
                 <!-- Edit Blog Tab -->
                 <div id="editTab" class="admin-tab-content">
                     <div class="form-group">
-                        <label for="wallpaperSelect">Select Wallpaper to Edit</label>
+                        <label>Select Wallpaper to Edit</label>
                         <select id="wallpaperSelect">
                             <option value="">Choose a wallpaper...</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label for="editBlogContent">Blog Content</label>
+                        <label>Blog Content</label>
                         <textarea id="editBlogContent" rows="10" placeholder="Edit the blog content..."></textarea>
                     </div>
                     
@@ -244,15 +184,6 @@
         </div>
     </div>
 
-    <!-- Back Button (Mobile) -->
-    <button id="backBtn" class="back-btn hidden">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Back
-    </button>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -261,5 +192,44 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Override render function for trending page
+        function renderTrendingWallpapers() {
+            const trendingWallpapers = [...wallpapers].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            
+            wallpaperGrid.innerHTML = '';
+            
+            if (trendingWallpapers.length === 0) {
+                wallpaperGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                        <h3>No wallpapers yet</h3>
+                        <p style="color: var(--text-secondary);">Be the first to upload!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            trendingWallpapers.forEach(wallpaper => {
+                const card = createWallpaperCard(wallpaper);
+                wallpaperGrid.appendChild(card);
+            });
+            
+            // Update stats
+            document.getElementById('totalWallpapers').textContent = wallpapers.length;
+            document.getElementById('totalLikes').textContent = wallpapers.reduce((sum, w) => sum + (w.likes || 0), 0);
+            
+            const categoryCounts = {};
+            wallpapers.forEach(w => {
+                categoryCounts[w.category] = (categoryCounts[w.category] || 0) + 1;
+            });
+            const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
+            document.getElementById('topCategory').textContent = topCategory ? topCategory[0].charAt(0).toUpperCase() + topCategory[0].slice(1) : '-';
+        }
+        
+        // Override the default render
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(renderTrendingWallpapers, 1000);
+        });
+    </script>
 </body>
 </html>
