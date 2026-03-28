@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walpi - Wallpaper Discovery Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Walpi</h1>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search for wallpapers..." class="search-bar">
+                    <button id="searchBtn" class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </div>
+                <nav class="nav-links">
+                    <a href="#" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">Categories</a>
+                    <a href="#" class="nav-link">Trending</a>
+                </nav>
+                <div class="user-section">
+                    <div class="username-selector">
+                        <input type="text" id="usernameInput" placeholder="Enter username..." class="username-input">
+                        <button id="setUsernameBtn" class="set-username-btn">Set</button>
+                    </div>
+                    <div id="userDisplay" class="user-display hidden">
+                        <span id="currentUsername" class="username"></span>
+                        <button id="adminPanelBtn" class="admin-btn hidden">Admin Panel</button>
+                        <button id="logoutBtn" class="logout-btn">Logout</button>
+                    </div>
+                </div>
+                <button id="darkModeToggle" class="dark-mode-toggle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Wallpaper Grid View (Default) -->
+            <div id="gridView" class="wallpaper-grid">
+                <div class="grid-header">
+                    <h2>Discover Wallpapers</h2>
+                    <div class="filter-tags">
+                        <button class="tag active" data-category="all">All</button>
+                        <button class="tag" data-category="nature">Nature</button>
+                        <button class="tag" data-category="anime">Anime</button>
+                        <button class="tag" data-category="minimal">Minimal</button>
+                        <button class="tag" data-category="abstract">Abstract</button>
+                    </div>
+                </div>
+                <div id="wallpaperGrid" class="grid">
+                    <!-- Wallpapers will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Wallpaper Detail View (Split Screen) -->
+            <div id="detailView" class="wallpaper-detail hidden">
+                <div class="detail-left">
+                    <div class="wallpaper-preview">
+                        <img id="mainWallpaper" src="" alt="" class="main-wallpaper">
+                    </div>
+                    <div class="wallpaper-actions">
+                        <button id="downloadBtn" class="action-btn primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download
+                        </button>
+                        <button id="likeBtn" class="action-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span id="likeCount">0</span>
+                        </button>
+                        <button id="shareBtn" class="action-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                    <div class="thumbnail-strip">
+                        <div id="thumbnailStrip" class="thumbnails">
+                            <!-- Additional thumbnails will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="ad-block">
+                        <div class="ad-placeholder">
+                            <span>Advertisement</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-right">
+                    <div class="wallpaper-info">
+                        <h1 id="wallpaperTitle">Wallpaper Title</h1>
+                        <p id="wallpaperDescription">Description of the wallpaper and its story...</p>
+                        <div id="wallpaperTags" class="tags">
+                            <!-- Tags will be dynamically loaded -->
+                        </div>
+                    </div>
+                    
+                    <div class="blog-content">
+                        <h3>About This Wallpaper</h3>
+                        <div id="blogText" class="blog-text">
+                            <!-- Blog content will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="ad-block">
+                        <div class="ad-placeholder">
+                            <span>Advertisement</span>
+                        </div>
+                    </div>
+                    
+                    <div class="more-to-explore">
+                        <h3>More to Explore</h3>
+                        <div id="relatedWallpapers" class="related-grid">
+                            <!-- Related wallpapers will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel hidden">
+        <div class="admin-overlay" onclick="closeAdminPanel()"></div>
+        <div class="admin-content">
+            <div class="admin-header">
+                <h2>Admin Panel</h2>
+                <button onclick="closeAdminPanel()" class="close-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="upload">Upload Wallpaper</button>
+                <button class="admin-tab" data-tab="edit">Edit Blog</button>
+            </div>
+            
+            <div class="admin-body">
+                <!-- Upload Tab -->
+                <div id="uploadTab" class="admin-tab-content active">
+                    <div class="form-group">
+                        <label for="wallpaperTitle">Title</label>
+                        <input type="text" id="adminTitle" placeholder="Enter wallpaper title...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wallpaperCategory">Category</label>
+                        <select id="adminCategory">
+                            <option value="nature">Nature</option>
+                            <option value="anime">Anime</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="abstract">Abstract</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wallpaperTags">Tags (comma-separated)</label>
+                        <input type="text" id="adminTags" placeholder="nature, landscape, mountains...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wallpaperImage">Image</label>
+                        <input type="file" id="adminImage" accept="image/*">
+                        <div class="image-preview" id="imagePreview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wallpaperAlt">Alt Text</label>
+                        <input type="text" id="adminAlt" placeholder="Describe the image for accessibility...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wallpaperDescription">Description</label>
+                        <textarea id="adminDescription" rows="3" placeholder="Brief description..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wallpaperBlog">Blog Content</label>
+                        <textarea id="adminBlog" rows="6" placeholder="Detailed blog content about this wallpaper..."></textarea>
+                    </div>
+                    
+                    <button onclick="uploadWallpaper()" class="admin-submit-btn">Upload Wallpaper</button>
+                </div>
+                
+                <!-- Edit Blog Tab -->
+                <div id="editTab" class="admin-tab-content">
+                    <div class="form-group">
+                        <label for="wallpaperSelect">Select Wallpaper to Edit</label>
+                        <select id="wallpaperSelect">
+                            <option value="">Choose a wallpaper...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBlogContent">Blog Content</label>
+                        <textarea id="editBlogContent" rows="10" placeholder="Edit the blog content..."></textarea>
+                    </div>
+                    
+                    <button onclick="updateBlogContent()" class="admin-submit-btn">Update Blog</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button (Mobile) -->
+    <button id="backBtn" class="back-btn hidden">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Walpi. Discover and download beautiful wallpapers.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
