@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Supabase Connection Test</h1>
+        <p>This page tests your Supabase configuration for the Walpi platform.</p>
+        
+        <button onclick="testConnection()">🔗 Test Connection</button>
+        <button onclick="testTableExists()">📋 Test Table Exists</button>
+        <button onclick="testStorage()">📁 Test Storage</button>
+        <button onclick="testInsert()">➕ Test Insert</button>
+        <button onclick="testSelect()">📖 Test Select</button>
+        <button onclick="cleanupTests()">🧹 Cleanup Test Data</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Your Supabase configuration
+        const SUPABASE_URL = 'https://ctnuznfvwazswxewniko.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0bnV6bmZ2d2F6c3d4ZXduaWtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjgzOTIsImV4cCI6MjA5MDIwNDM5Mn0.LNMFTyIyqhtwQ3tMh700vHCNvXg5r1JDkP5xyErkkqU';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const results = document.getElementById('results');
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        async function testConnection() {
+            addResult('🔗 Testing Supabase connection...', 'info');
+            
+            try {
+                const { data, error } = await supabase.from('wallpapers').select('count');
+                
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        addResult('✅ Supabase connection successful, but table does not exist yet. Run setup.sql first!', 'warning');
+                    } else {
+                        addResult(`❌ Connection error: ${error.message}`, 'error');
+                        addResult(`Error details: <pre>${JSON.stringify(error, null, 2)}</pre>`, 'error');
+                    }
+                } else {
+                    addResult('✅ Supabase connection successful!', 'success');
+                    addResult(`📊 Table exists with ${data[0].count} records`, 'success');
+                }
+            } catch (err) {
+                addResult(`❌ Connection failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function testTableExists() {
+            addResult('📋 Checking if wallpapers table exists...', 'info');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('wallpapers')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) {
+                    addResult(`❌ Table check failed: ${error.message}`, 'error');
+                } else {
+                    addResult('✅ Wallpapers table exists and is accessible!', 'success');
+                    if (data.length > 0) {
+                        addResult(`📄 Found sample record: ${JSON.stringify(data[0])}`, 'info');
+                    } else {
+                        addResult('📄 Table exists but is empty', 'info');
+                    }
+                }
+            } catch (err) {
+                addResult(`❌ Table check failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function testStorage() {
+            addResult('📁 Testing Supabase Storage...', 'info');
+            
+            try {
+                const { data, error } = await supabase.storage.getBucket('wallpapers');
+                
+                if (error) {
+                    addResult(`❌ Storage bucket check failed: ${error.message}`, 'error');
+                    addResult('💡 Make sure you created the storage bucket in setup.sql', 'warning');
+                } else {
+                    addResult('✅ Storage bucket "wallpapers" exists!', 'success');
+                }
+            } catch (err) {
+                addResult(`❌ Storage test failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function testInsert() {
+            addResult('➕ Testing insert operation...', 'info');
+            
+            try {
+                const testWallpaper = {
+                    title: 'Test Wallpaper',
+                    description: 'This is a test wallpaper',
+                    category: 'test',
+                    tags: ['test', 'demo'],
+                    blog_content: 'This is test blog content',
+                    image_url: 'https://picsum.photos/seed/test/800/1200.jpg',
+                    thumbnail_url: 'https://picsum.photos/seed/test/400/600.jpg',
+                    alt: 'Test wallpaper image',
+                    likes: 0
+                };
+                
+                const { data, error } = await supabase
+                    .from('wallpapers')
+                    .insert([testWallpaper])
+                    .select();
+                
+                if (error) {
+                    addResult(`❌ Insert failed: ${error.message}`, 'error');
+                } else {
+                    addResult('✅ Insert operation successful!', 'success');
+                    addResult(`📝 Inserted record ID: ${data[0].id}`, 'info');
+                    
+                    // Store for cleanup
+                    window.testRecordId = data[0].id;
+                }
+            } catch (err) {
+                addResult(`❌ Insert failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function testSelect() {
+            addResult('📖 Testing select operation...', 'info');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('wallpapers')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (error) {
+                    addResult(`❌ Select failed: ${error.message}`, 'error');
+                } else {
+                    addResult(`✅ Select successful! Found ${data.length} records`, 'success');
+                    
+                    if (data.length > 0) {
+                        addResult('📄 Recent records:', 'info');
+                        data.forEach(record => {
+                            addResult(`- ${record.title} (ID: ${record.id})`, 'info');
+                        });
+                    }
+                }
+            } catch (err) {
+                addResult(`❌ Select failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function cleanupTests() {
+            addResult('🧹 Cleaning up test data...', 'info');
+            
+            if (!window.testRecordId) {
+                addResult('ℹ️ No test record to cleanup', 'info');
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('wallpapers')
+                    .delete()
+                    .eq('title', 'Test Wallpaper');
+                
+                if (error) {
+                    addResult(`❌ Cleanup failed: ${error.message}`, 'error');
+                } else {
+                    addResult('✅ Test data cleaned up successfully!', 'success');
+                    delete window.testRecordId;
+                }
+            } catch (err) {
+                addResult(`❌ Cleanup failed: ${err.message}`, 'error');
+            }
+        }
+
+        // Auto-run connection test on page load
+        window.onload = () => {
+            addResult('🚀 Supabase test page loaded. Click buttons above to test functionality.', 'info');
+            testConnection();
+        };
+    </script>
+</body>
+</html>
